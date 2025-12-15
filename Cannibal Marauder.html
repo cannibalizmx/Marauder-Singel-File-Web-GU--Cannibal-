@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cannibal V15.5 (ULTIMATE HYBRID)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cannibal-green': '#00ff9d',
+                        'cannibal-red': '#ff2a6d',
+                        'cannibal-blue': '#05d9e8',
+                        'cannibal-purple': '#bf00ff',
+                        'cannibal-gold': '#ffd700',
+                        'cannibal-orange': '#ff9f1c',
+                        'glass-border': 'rgba(255, 255, 255, 0.1)',
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 10px rgba(0, 255, 157, 0.2)' },
+                            '50%': { boxShadow: '0 0 25px rgba(0, 255, 157, 0.6)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1a1a2e 0%, #000 60%),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 50px 50px, 50px 50px;
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .glass-panel {
+            background: rgba(20, 20, 25, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- DOCK STYLES --- */
+        .dock-wrapper {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 8px; padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            z-index: 50; transition: all 0.3s;
+        }
+
+        .dock-icon {
+            width: 45px; height: 45px;
+            border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #666; transition: all 0.2s ease-out;
+            cursor: pointer; position: relative;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid transparent;
+        }
+
+        .dock-icon i { font-size: 16px; margin-bottom: 2px; transition: 0.2s; }
+        .dock-icon span { font-size: 7px; font-weight: 700; letter-spacing: 0.5px; opacity: 0; transform: translateY(5px); transition: 0.2s; }
+
+        .dock-icon:hover { transform: translateY(-5px) scale(1.1); }
+        .dock-icon:hover span { opacity: 1; transform: translateY(0); }
+        .dock-icon.active { transform: translateY(-3px); }
+        .dock-icon.active span { opacity: 1; transform: translateY(0); }
+
+        /* THEME COLORS FOR DOCK */
+        .dock-icon.wifi:hover, .dock-icon.wifi.active { color: #00ff9d; background: rgba(0, 255, 157, 0.1); border-color: rgba(0, 255, 157, 0.2); }
+        .dock-icon.lan:hover, .dock-icon.lan.active { color: #3b82f6; background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); }
+        .dock-icon.ble:hover, .dock-icon.ble.active { color: #05d9e8; background: rgba(5, 217, 232, 0.1); border-color: rgba(5, 217, 232, 0.2); }
+        .dock-icon.gps:hover, .dock-icon.gps.active { color: #ff9f1c; background: rgba(255, 159, 28, 0.1); border-color: rgba(255, 159, 28, 0.2); }
+        .dock-icon.portal:hover, .dock-icon.portal.active { color: #bf00ff; background: rgba(191, 0, 255, 0.1); border-color: rgba(191, 0, 255, 0.2); }
+        .dock-icon.attack:hover, .dock-icon.attack.active { color: #ff2a6d; background: rgba(255, 42, 109, 0.1); border-color: rgba(255, 42, 109, 0.2); }
+        .dock-icon.loot:hover, .dock-icon.loot.active { color: #ffd700; background: rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.2); }
+        .dock-icon.term:hover, .dock-icon.term.active { color: #22c55e; background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.2); }
+        .dock-icon.sys:hover, .dock-icon.sys.active { color: #e5e7eb; background: rgba(229, 231, 235, 0.1); border-color: rgba(229, 231, 235, 0.2); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        .mini-term::-webkit-scrollbar { width: 4px; }
+        .mini-term::-webkit-scrollbar-thumb { background: #05d9e8; border-radius: 2px; }
+
+        .radar-scan {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: #00ff9d; box-shadow: 0 0 15px #00ff9d;
+            animation: scanDown 2s infinite linear; display: none;
+        }
+        @keyframes scanDown { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 0; } }
+        
+        .input-dark {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: white; padding: 4px 8px; border-radius: 4px; outline: none;
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        }
+        .input-dark:focus { border-color: #00ff9d; }
+
+        .card-disabled { opacity: 0.5; cursor: not-allowed !important; filter: grayscale(100%); pointer-events: none; }
+        
+        .sniff-btn.active-sniff {
+            border-color: #bf00ff !important;
+            background-color: rgba(191, 0, 255, 0.15) !important;
+            color: #bf00ff !important;
+        }
+
+        .bar-container { display: flex; align-items: flex-end; justify-content: center; height: 100%; gap: 4px; }
+        .sig-bar {
+            width: 50px;
+            background: linear-gradient(to top, rgba(0,255,157,0.2), rgba(0,255,157,0.8));
+            transition: height 0.05s linear, background-color 0.1s; 
+            border-radius: 4px 4px 0 0;
+            box-shadow: 0 0 15px rgba(0,255,157,0.3);
+        }
+        .sig-val-text { text-shadow: 0 0 10px currentColor; }
+
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .sta-card-anim { animation: slideInUp 0.3s ease-out forwards; }
+
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
+        .count-pop { animation: pop 0.2s ease-in-out; }
+
+        /* --- V15.4 GÖRSEL BÖLÜMLER --- */
+        .pulse-ring {
+            position: relative;
+            display: flex; justify-content: center; align-items: center;
+            width: 40px; height: 40px;
+        }
+        .pulse-ring::before {
+            content: ''; position: absolute;
+            width: 100%; height: 100%; border-radius: 50%;
+            border: 2px solid #05d9e8; opacity: 0;
+            animation: pulseRing 2s infinite;
+        }
+        .pulse-ring::after {
+            content: ''; position: absolute;
+            width: 70%; height: 70%; border-radius: 50%;
+            background: rgba(5, 217, 232, 0.2); box-shadow: 0 0 10px #05d9e8;
+        }
+        @keyframes pulseRing {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .lan-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden;
+        }
+        .lan-card:hover {
+            background: rgba(5, 217, 232, 0.05);
+            border-color: rgba(5, 217, 232, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .lan-card.active-target {
+            border-color: #ff2a6d;
+            background: rgba(255, 42, 109, 0.1);
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.2);
+        }
+        .tech-line {
+            position: absolute; bottom: 0; left: 0; height: 2px; width: 0%;
+            background: #05d9e8; box-shadow: 0 0 10px #05d9e8;
+            transition: width 0.3s ease;
+        }
+        .lan-card:hover .tech-line { width: 100%; }
+        .lan-card.active-target .tech-line { width: 100%; background: #ff2a6d; box-shadow: 0 0 10px #ff2a6d; }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-all duration-1000">
+        <h1 class="text-7xl md:text-9xl font-black text-white tracking-tighter text-center leading-none select-none">
+            CANNIBAL<br>
+            <span class="text-3xl md:text-5xl font-light tracking-[0.5em] text-cannibal-green block mt-4">MARAUDER</span>
+            <span class="text-xs font-mono text-gray-500 tracking-widest block mt-4">V15.5 HYBRID</span>
+        </h1>
+        <div class="flex flex-col gap-4 mt-20" style="animation-delay: 1s;">
+            <button id="connect-btn" class="px-10 py-4 rounded-full border border-white/20 text-white font-bold tracking-[0.2em] text-xs hover:bg-cannibal-green hover:text-black hover:border-cannibal-green transition-all duration-300 shadow-[0_0_30px_rgba(0,0,0,0.5)] animate-pulse-glow">
+                CONNECT SYSTEM
+            </button>
+        </div>
+    </div>
+
+    <div id="dashboard" class="flex flex-col h-full opacity-0 transition-opacity duration-1000 hidden">
+        
+        <header class="h-12 flex items-center justify-between px-6 border-b border-white/5 bg-black/40 backdrop-blur-md z-40">
+            <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-cannibal-green shadow-[0_0_10px_#00ff9d] animate-pulse"></div>
+                <span class="font-bold tracking-widest text-[10px] text-gray-200">CANNIBAL <span class="text-gray-600">v15.5</span></span>
+            </div>
+            <div class="flex gap-4 items-center">
+                 <i id="wifi-status-icon" class="fa-solid fa-wifi text-cannibal-blue text-xs hidden shadow-[0_0_10px_#05d9e8]"></i>
+
+                 <div class="hidden md:flex px-3 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-gray-400 items-center gap-2 cursor-pointer hover:bg-white/10" onclick="sendCommand('packetcount')" title="Get Packet Count">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>PKTS: <span id="pkt-count" class="text-white">0</span></span>
+                </div>
+                <div class="px-3 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-gray-400 flex items-center gap-2">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span id="status-text">DISCONNECTED</span>
+                </div>
+                <button onclick="stopAll()" class="w-6 h-6 rounded bg-cannibal-red/10 border border-cannibal-red/30 text-cannibal-red hover:bg-cannibal-red hover:text-white transition flex items-center justify-center" title="STOP ALL">
+                    <i class="fa-solid fa-square text-[10px]"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 flex overflow-hidden relative">
+            
+            <div class="w-96 border-r border-white/5 bg-black/40 backdrop-blur-xl flex flex-col relative z-30 flex-shrink-0 transition-all duration-300">
+                <div class="p-4 border-b border-white/5 bg-white/5 flex justify-between items-center shadow-lg">
+                    <div class="flex items-center gap-3 cursor-pointer group" onclick="toggleSelectionMode()">
+                        <div id="mode-indicator" class="w-8 h-4 rounded-full bg-gray-800 border border-gray-600 relative transition-all shadow-inner">
+                            <div id="mode-dot" class="absolute top-0.5 left-0.5 w-2.5 h-2.5 bg-white rounded-full transition-all shadow-md"></div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[8px] font-bold text-gray-400 tracking-wider">MODE</span>
+                            <span id="mode-text" class="text-[9px] font-black text-white leading-none group-hover:text-cannibal-green transition">OBSERVE</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="saveList()" class="w-7 h-7 rounded-full bg-white/5 hover:bg-cannibal-green/20 text-gray-400 hover:text-cannibal-green transition flex items-center justify-center border border-white/5" title="Save List to SD">
+                            <i class="fa-solid fa-floppy-disk text-[10px]"></i>
+                        </button>
+                        <button onclick="clearList()" class="w-7 h-7 rounded-full bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition flex items-center justify-center border border-white/5" title="Clear UI List">
+                            <i class="fa-solid fa-trash-can text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="scanner-line" class="radar-scan"></div>
+
+                <div id="network-list" class="flex-1 overflow-y-auto p-3 space-y-2 pb-20 scroll-smooth">
+                    <div class="h-full flex flex-col items-center justify-center text-gray-700 gap-3 opacity-50" id="empty-state">
+                        <i class="fa-solid fa-satellite-dish text-4xl mb-2"></i>
+                        <span class="text-xs font-mono tracking-widest">WAITING DATA...</span>
+                    </div>
+                </div>
+                
+                <div class="p-2 border-t border-white/5 bg-black/60 backdrop-blur text-[9px] flex justify-between items-center font-mono text-gray-500">
+                    <span>TOTAL: <span id="total-count" class="text-white">0</span></span>
+                    <span>SELECTED: <span id="target-count" class="text-cannibal-green font-bold">NONE</span></span>
+                </div>
+            </div>
+
+            <div class="flex-1 bg-gradient-to-br from-black to-[#0a0a0f] relative overflow-hidden">
+                
+                <div id="view-wifi" class="view-panel h-full p-8 overflow-y-auto pb-32">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h2 class="text-3xl font-thin text-white mb-1">WIFI RECON</h2>
+                            <p class="text-[10px] text-cannibal-green font-mono tracking-widest">ACCESS POINT & STATION ANALYSIS</p>
+                        </div>
+                        <button onclick="toggleSniffModal()" class="px-4 py-2 bg-cannibal-purple/10 border border-cannibal-purple/50 text-cannibal-purple rounded hover:bg-cannibal-purple hover:text-white transition flex items-center gap-2 text-xs font-bold shadow-[0_0_15px_rgba(191,0,255,0.3)] animate-pulse">
+                            <i class="fa-solid fa-mask"></i> SNIFFER TOOLS
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <button onclick="runScan('scanap')" class="glass-panel p-6 rounded-xl text-left group hover:bg-white/5 transition-all relative overflow-hidden">
+                            <i class="fa-solid fa-wifi text-4xl text-cannibal-green absolute top-4 right-4 opacity-10 group-hover:opacity-30 transition"></i>
+                            <div class="text-cannibal-green text-[10px] font-bold tracking-widest mb-1">ACCESS POINTS</div>
+                            <div class="text-xl text-white font-bold">SCAN APs</div>
+                        </button>
+                        <button onclick="openStationModal()" class="glass-panel p-6 rounded-xl text-left group hover:bg-cannibal-orange/10 border border-transparent hover:border-cannibal-orange/30 transition-all relative overflow-hidden">
+                            <i class="fa-solid fa-mobile-screen text-4xl text-cannibal-orange absolute top-4 right-4 opacity-10 group-hover:opacity-30 transition"></i>
+                            <div class="text-cannibal-orange text-[10px] font-bold tracking-widest mb-1">STATIONS</div>
+                            <div class="text-xl text-white font-bold">SCAN STA</div>
+                        </button>
+                         <button onclick="runScan('scanall')" class="glass-panel p-6 rounded-xl text-left group hover:bg-white/5 transition-all relative overflow-hidden">
+                            <i class="fa-solid fa-globe text-4xl text-cannibal-green absolute top-4 right-4 opacity-10 group-hover:opacity-30 transition"></i>
+                            <div class="text-cannibal-green text-[10px] font-bold tracking-widest mb-1">FULL SPECTRUM</div>
+                            <div class="text-xl text-white font-bold">SCAN ALL</div>
+                        </button>
+                    </div>
+
+                    <div class="glass-panel p-4 rounded-xl mb-6 border-l-2 border-cannibal-green">
+                        <div class="flex justify-between items-center cursor-pointer" onclick="document.getElementById('ssid-mgr-content').classList.toggle('hidden')">
+                             <h3 class="text-xs font-bold text-gray-400 flex items-center gap-2"><i class="fa-solid fa-list-ul"></i> SSID MANAGER</h3>
+                             <i class="fa-solid fa-chevron-down text-gray-500 text-xs"></i>
+                        </div>
+                        <div id="ssid-mgr-content" class="mt-3">
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <input type="text" id="ssid-input" class="flex-1 input-dark" placeholder="Enter custom SSID name...">
+                                <button onclick="addSSID()" class="px-3 bg-cannibal-green/10 text-cannibal-green border border-cannibal-green/30 rounded font-bold hover:bg-cannibal-green hover:text-black text-[10px]">ADD</button>
+                            </div>
+                            <div class="flex flex-wrap gap-2 items-center border-t border-white/5 pt-3">
+                                <span class="text-[9px] text-gray-500 font-mono">GENERATOR:</span>
+                                <button onclick="sendCommand('ssid -a -g 5')" class="px-2 py-1 bg-white/5 rounded text-[9px] hover:bg-white/10">Gen 5 Random</button>
+                                <button onclick="sendCommand('ssid -a -g 20')" class="px-2 py-1 bg-white/5 rounded text-[9px] hover:bg-white/10">Gen 20 Random</button>
+                                <div class="flex-1"></div>
+                                <button onclick="sendCommand('ssid -r -a')" class="px-2 py-1 bg-red-500/10 text-red-500 border border-red-500/30 rounded text-[9px] hover:bg-red-500 hover:text-white">REMOVE ALL</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-lan" class="view-panel h-full p-8 overflow-y-auto pb-32 hidden relative">
+                    <div class="flex justify-between items-end mb-8">
+                        <div>
+                            <h2 class="text-3xl font-thin text-white mb-1">LAN OPERATIONS</h2>
+                            <p class="text-[10px] text-blue-400 font-mono tracking-widest">LOCAL NETWORK & SIGNAL INTELLIGENCE</p>
+                        </div>
+                        <button onclick="openSigmonModal()" class="px-5 py-2 bg-cannibal-green/10 border border-cannibal-green/50 text-cannibal-green rounded flex items-center gap-2 text-xs font-bold transition-all shadow-[0_0_10px_rgba(0,255,157,0.3)] animate-pulse">
+                            <i class="fa-solid fa-satellite-dish"></i> LAUNCH SIGMON
+                        </button>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl mb-6 relative overflow-hidden group border-l-4 border-cannibal-blue flex items-center justify-between">
+                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+                        
+                        <div class="flex items-center gap-6 relative z-10">
+                            <div id="uplink-anim-box" class="pulse-ring opacity-30 grayscale transition-all duration-500">
+                                <i class="fa-solid fa-wifi text-white relative z-20 text-sm"></i>
+                            </div>
+
+                            <div>
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2 tracking-widest">
+                                    UPLINK STATUS
+                                </h3>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] text-gray-400 font-mono tracking-wider" id="uplink-status">SYSTEM OFFLINE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="openWifiModal()" class="relative z-10 px-6 py-3 bg-cannibal-blue/10 border border-cannibal-blue/50 text-cannibal-blue rounded font-bold tracking-widest text-xs hover:bg-cannibal-blue hover:text-black transition-all shadow-[0_0_15px_rgba(5,217,232,0.2)] hover:shadow-[0_0_30px_rgba(5,217,232,0.5)]">
+                            CONNECTION MGR
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <div class="lg:col-span-1 space-y-4">
+                            <div class="glass-panel p-4 rounded-xl border border-white/5">
+                                <h4 class="text-[10px] font-bold text-gray-500 mb-3 border-b border-white/5 pb-1">RECONNAISSANCE</h4>
+                                <div class="space-y-2">
+                                    <button onclick="sendCommand('arpscan -f'); document.getElementById('lan-list').innerHTML='';" class="w-full py-3 bg-white/5 border border-white/10 hover:border-cannibal-green hover:text-cannibal-green rounded text-[10px] font-bold transition flex items-center justify-between px-4 group">
+                                        <span>ARP SCAN</span>
+                                        <i class="fa-solid fa-radar text-gray-600 group-hover:text-cannibal-green"></i>
+                                    </button>
+                                    <button onclick="sendCommand('pingscan')" class="w-full py-3 bg-white/5 border border-white/10 hover:border-purple-500 hover:text-purple-500 rounded text-[10px] font-bold transition flex items-center justify-between px-4 group">
+                                        <span>PING SWEEP</span>
+                                        <i class="fa-solid fa-server text-gray-600 group-hover:text-purple-500"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                             <div class="glass-panel p-4 rounded-xl border border-white/5">
+                                <h4 class="text-[10px] font-bold text-gray-500 mb-3 border-b border-white/5 pb-1">TARGET ANALYSIS</h4>
+                                <div class="flex gap-2 mb-2">
+                                    <input type="text" id="target-ip" class="flex-1 input-dark font-mono text-center" placeholder="Target IP..." readonly>
+                                </div>
+                                <button onclick="runPortScan()" class="w-full py-2 bg-red-500/10 text-red-500 border border-red-500/30 rounded font-bold hover:bg-red-500 hover:text-white text-[10px] transition">
+                                    SCAN PORTS
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-2 flex flex-col min-h-[400px]">
+                             <div class="flex justify-between items-end mb-3 border-b border-white/5 pb-2">
+                                <span class="text-[10px] font-bold text-gray-400 flex items-center gap-2"><i class="fa-solid fa-network-wired text-cannibal-blue"></i> LAN MATRIX</span>
+                                <span class="text-[9px] font-mono text-cannibal-blue" id="lan-count">0 ENTITIES</span>
+                            </div>
+                            <div id="lan-list" class="flex-1 overflow-y-auto p-1 grid grid-cols-1 md:grid-cols-2 gap-3 content-start pb-20">
+                                <div class="col-span-full h-40 flex flex-col items-center justify-center text-gray-800 gap-3 border border-white/5 rounded-xl border-dashed">
+                                    <i class="fa-solid fa-radar text-4xl animate-pulse"></i>
+                                    <span class="text-xs font-mono">AWAITING ARP DATA...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="view-attack" class="view-panel h-full p-8 overflow-y-auto pb-32 hidden">
+                    <h2 class="text-3xl font-thin text-white mb-2">OFFENSIVE</h2>
+                    <p class="text-[10px] text-cannibal-red font-mono mb-8 tracking-widest">ACTIVE COUNTERMEASURES</p>
+
+                    <div class="mb-6 p-3 bg-cannibal-red/5 border-l-2 border-cannibal-red text-gray-400 text-[10px] flex items-center gap-2">
+                        <i class="fa-solid fa-crosshairs text-cannibal-red"></i> 
+                        <span>Switch to TARGET mode in WIFI tab to select victims first.</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="glass-panel p-4 rounded-xl">
+                            <h3 class="text-[10px] font-bold text-cannibal-red mb-3">DENIAL OF SERVICE</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="sendCommand('attack -t deauth')" class="h-20 bg-white/5 hover:bg-cannibal-red/20 hover:text-white rounded border border-white/10 text-gray-400 text-[10px] font-bold flex flex-col items-center justify-center gap-2 transition">
+                                    <i class="fa-solid fa-skull-crossbones text-xl"></i> DEAUTH FLOOD
+                                </button>
+                                <button onclick="sendCommand('attack -t probe')" class="h-20 bg-white/5 hover:bg-cannibal-red/20 hover:text-white rounded border border-white/10 text-gray-400 text-[10px] font-bold flex flex-col items-center justify-center gap-2 transition">
+                                    <i class="fa-solid fa-envelope-open-text text-xl"></i> PROBE FLOOD
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-4 rounded-xl">
+                            <h3 class="text-[10px] font-bold text-yellow-500 mb-3">BEACON SPAM</h3>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="sendCommand('attack -t beacon -l')" class="h-20 bg-white/5 hover:bg-yellow-500/20 hover:text-white rounded border border-white/10 text-gray-400 text-[9px] font-bold flex flex-col items-center justify-center gap-1 transition">
+                                    <i class="fa-solid fa-list text-lg"></i> USE LIST
+                                </button>
+                                <button onclick="sendCommand('attack -t beacon -r')" class="h-20 bg-white/5 hover:bg-yellow-500/20 hover:text-white rounded border border-white/10 text-gray-400 text-[9px] font-bold flex flex-col items-center justify-center gap-1 transition">
+                                    <i class="fa-solid fa-shuffle text-lg"></i> RANDOM
+                                </button>
+                                <button onclick="sendCommand('attack -t beacon -a')" class="h-20 bg-white/5 hover:bg-yellow-500/20 hover:text-white rounded border border-white/10 text-gray-400 text-[9px] font-bold flex flex-col items-center justify-center gap-1 transition">
+                                    <i class="fa-solid fa-wifi text-lg"></i> CLONE APs
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-4 rounded-xl mb-6">
+                        <h3 class="text-[10px] font-bold text-purple-500 mb-3">ADVANCED</h3>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-1 flex gap-2 items-center bg-white/5 p-2 rounded">
+                                <input type="number" id="karma-input" class="w-16 input-dark" placeholder="Index">
+                                <button onclick="runKarma()" class="flex-1 bg-purple-500/20 text-purple-400 border border-purple-500/50 rounded py-2 text-[10px] font-bold hover:bg-purple-500 hover:text-white transition">START KARMA ATTACK</button>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="sendCommand('attack -t rickroll')" class="px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[10px] text-gray-300">RICKROLL</button>
+                                <button onclick="sendCommand('attack -t badmsg')" class="px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[10px] text-gray-300">BAD PACKET</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-ble" class="view-panel h-full p-8 overflow-y-auto pb-32 hidden">
+                     <h2 class="text-3xl font-thin text-white mb-2">BLUETOOTH</h2>
+                    <p class="text-[10px] text-cannibal-blue font-mono mb-8 tracking-widest">LOW ENERGY OPERATIONS</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <button onclick="runScan('sniffbt airtag')" class="glass-panel p-4 rounded-xl hover:bg-cannibal-blue/10 border-l-4 border-cannibal-blue text-left transition group">
+                            <i class="fa-brands fa-apple text-2xl text-white mb-2"></i>
+                            <div class="text-[10px] text-gray-400 font-bold">SNIFF</div>
+                            <div class="text-sm font-bold text-cannibal-blue">AIRTAGS</div>
+                        </button>
+                        <button onclick="runScan('sniffbt flipper')" class="glass-panel p-4 rounded-xl hover:bg-orange-500/10 border-l-4 border-orange-500 text-left transition group">
+                            <i class="fa-solid fa-dolphin text-2xl text-white mb-2"></i>
+                            <div class="text-[10px] text-gray-400 font-bold">SNIFF</div>
+                            <div class="text-sm font-bold text-orange-500">FLIPPER ZERO</div>
+                        </button>
+                    </div>
+                    
+                    <h3 class="text-[10px] font-bold text-gray-500 mb-3">SPOOFING & SECURITY</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <button onclick="sendCommand('spoofat -t 2')" class="p-3 bg-white/5 rounded border border-white/5 hover:border-cannibal-blue hover:text-cannibal-blue transition text-[10px] font-bold flex items-center justify-center gap-2"><i class="fa-brands fa-apple"></i> SPOOF AIRTAG</button>
+                        <button onclick="sendCommand('sniffskim')" class="p-3 bg-white/5 rounded border border-white/5 hover:border-red-500 hover:text-red-500 transition text-[10px] font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-credit-card"></i> SKIMMER HUNTER</button>
+                    </div>
+
+                    <h3 class="text-[10px] font-bold text-gray-500 mb-3">BLE SPAM (WALL OF FLIPPER)</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                        <button onclick="sendCommand('blespam -t apple')" class="p-3 bg-white/5 rounded border border-white/5 hover:border-white hover:bg-white/10 transition text-[10px] font-bold">iOS</button>
+                        <button onclick="sendCommand('blespam -t google')" class="p-3 bg-white/5 rounded border border-white/5 hover:border-white hover:bg-white/10 transition text-[10px] font-bold">ANDROID</button>
+                        <button onclick="sendCommand('blespam -t windows')" class="p-3 bg-white/5 rounded border border-white/5 hover:border-white hover:bg-white/10 transition text-[10px] font-bold">WINDOWS</button>
+                        <button onclick="sendCommand('blespam -t samsung')" class="p-3 bg-white/5 rounded border border-white/5 hover:border-white hover:bg-white/10 transition text-[10px] font-bold">SAMSUNG</button>
+                        <button onclick="sendCommand('blespam -t flipper')" class="p-3 bg-orange-500/10 text-orange-500 rounded border border-orange-500/30 hover:bg-orange-500 hover:text-white transition text-[10px] font-bold">FLIPPER</button>
+                        <button onclick="sendCommand('blespam -t all')" class="p-3 bg-red-600/10 text-red-500 rounded border border-red-600/30 hover:bg-red-600 hover:text-white transition text-[10px] font-bold">ALL</button>
+                    </div>
+                </div>
+                
+                <div id="view-portal" class="view-panel h-full p-8 overflow-y-auto pb-32 hidden">
+                    <h2 class="text-3xl font-thin text-white mb-2">EVIL PORTAL</h2>
+                    <p class="text-[10px] text-cannibal-purple font-mono mb-8 tracking-widest">CAPTIVE PORTAL ATTACKS</p>
+                    
+                    <div class="glass-panel p-6 rounded-xl mb-6 text-center">
+                        <i class="fa-solid fa-dungeon text-5xl text-cannibal-purple mb-4 animate-pulse"></i>
+                        <p class="text-xs text-gray-400 mb-6">Create a fake Access Point that serves a malicious HTML page to harvest credentials.</p>
+                        
+                        <div class="grid grid-cols-1 gap-4 max-w-md mx-auto">
+                            <div class="flex gap-2">
+                                <input type="text" id="portal-html" class="flex-1 input-dark" placeholder="index.html">
+                                <button onclick="setPortalHtml()" class="px-4 py-2 bg-white/5 border border-white/10 rounded text-xs font-bold hover:bg-white/10">SET HTML</button>
+                            </div>
+                            <button onclick="sendCommand('evilportal -c start')" class="w-full py-3 bg-cannibal-purple/20 border border-cannibal-purple text-cannibal-purple rounded font-bold hover:bg-cannibal-purple hover:text-white transition">START PORTAL</button>
+                            <button onclick="sendCommand('stopscan')" class="w-full py-2 bg-red-500/10 border border-red-500/30 text-red-500 rounded font-bold hover:bg-red-500 hover:text-white transition">STOP PORTAL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-gps" class="view-panel h-full p-8 overflow-y-auto pb-32 hidden">
+                    <h2 class="text-3xl font-thin text-white mb-2">GPS & WARD</h2>
+                    <p class="text-[10px] text-cannibal-orange font-mono mb-8 tracking-widest">POSITIONING & TRACKING</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="glass-panel p-5 rounded-xl">
+                            <h3 class="text-xs font-bold text-gray-400 mb-3">DATA STREAM</h3>
+                            <div class="flex flex-col gap-2">
+                                <button onclick="sendCommand('gps')" class="p-3 bg-white/5 text-left border border-white/10 rounded hover:bg-white/10 text-[10px] font-mono">GET GPS DATA</button>
+                                <button onclick="sendCommand('gpsdata')" class="p-3 bg-white/5 text-left border border-white/10 rounded hover:bg-white/10 text-[10px] font-mono">RAW GPS DATA</button>
+                                <button onclick="sendCommand('nmea')" class="p-3 bg-white/5 text-left border border-white/10 rounded hover:bg-white/10 text-[10px] font-mono">STREAM NMEA</button>
+                            </div>
+                        </div>
+                        <div class="glass-panel p-5 rounded-xl">
+                            <h3 class="text-xs font-bold text-gray-400 mb-3">WARDRIVING</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="sendCommand('gpspoi -s')" class="p-3 bg-cannibal-orange/10 text-cannibal-orange border border-cannibal-orange/30 rounded hover:bg-cannibal-orange hover:text-black text-[10px] font-bold">SAVE POI</button>
+                                <button onclick="sendCommand('gpstracker -c start')" class="p-3 bg-green-500/10 text-green-500 border border-green-500/30 rounded hover:bg-green-500 hover:text-black text-[10px] font-bold">START TRACK</button>
+                                <button onclick="sendCommand('gpstracker -c stop')" class="col-span-2 p-2 bg-red-500/10 text-red-500 border border-red-500/30 rounded hover:bg-red-500 hover:text-white text-[10px] font-bold">STOP TRACKING</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-loot" class="view-panel h-full p-8 overflow-y-auto pb-32 hidden">
+                    <h2 class="text-3xl font-thin text-white mb-2">LOOT LOCKER</h2>
+                    <p class="text-[10px] text-cannibal-gold font-mono mb-8 tracking-widest">CAPTURED HASHES (RAM)</p>
+                    
+                    <div class="flex gap-4 mb-4">
+                        <button onclick="sendCommand('settings -s SavePCAP enable')" class="flex-1 py-2 border border-cannibal-green/30 bg-cannibal-green/10 text-cannibal-green rounded text-[10px] font-bold hover:bg-cannibal-green hover:text-black transition">ENABLE PCAP SD</button>
+                        <button onclick="sendCommand('settings -s SavePCAP disable')" class="flex-1 py-2 border border-red-500/30 bg-red-500/10 text-red-500 rounded text-[10px] font-bold hover:bg-red-500 hover:text-white transition">DISABLE PCAP SD</button>
+                    </div>
+
+                    <div id="loot-container" class="space-y-4">
+                        <div class="p-4 border border-white/5 rounded-xl bg-white/5 text-center text-gray-500 text-xs font-mono">
+                            <i class="fa-solid fa-ghost text-2xl mb-2 opacity-50"></i><br>
+                            Waiting for PMKID or Handshakes from Serial Stream...
+                        </div>
+                    </div>
+                    <button onclick="clearLoot()" class="mt-6 px-4 py-2 border border-white/10 rounded text-[10px] hover:bg-red-500/20 text-gray-400">CLEAR LOOT</button>
+                </div>
+
+                <div id="view-utils" class="view-panel h-full p-8 overflow-y-auto pb-32 hidden">
+                    <h2 class="text-3xl font-thin text-white mb-2">SYSTEM</h2>
+                    <p class="text-[10px] text-gray-500 font-mono mb-8 tracking-widest">N16R8 CONFIGURATION</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        
+                        <div class="glass-panel p-5 rounded-xl">
+                            <h3 class="text-xs font-bold text-gray-400 mb-3">POWER & RESET</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="sendCommand('reboot')" class="p-2 bg-red-500/10 hover:bg-red-500 hover:text-white border border-red-500/30 rounded text-[10px] transition font-bold">REBOOT</button>
+                                <button onclick="sendCommand('update -s')" class="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[10px] transition">SD UPDATE</button>
+                                <button onclick="sendCommand('update -w')" class="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[10px] transition">WEB UPDATE</button>
+                                <button onclick="sendCommand('settings -r')" class="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[10px] transition">RESET CFG</button>
+                                <button onclick="sendCommand('info')" class="col-span-2 p-2 bg-blue-500/10 hover:bg-blue-500 hover:text-white border border-blue-500/30 rounded text-[10px] transition font-bold">DEVICE INFO</button>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-5 rounded-xl">
+                            <h3 class="text-xs font-bold text-gray-400 mb-3">SD STORAGE & SCRIPTS</h3>
+                            <div class="flex flex-col gap-2">
+                                <div class="flex gap-2">
+                                    <button onclick="sendCommand('save -a')" class="flex-1 p-2 bg-cannibal-green/10 text-cannibal-green border border-cannibal-green/30 hover:bg-cannibal-green hover:text-black rounded text-[10px] transition font-bold">SAVE CFG</button>
+                                    <button onclick="sendCommand('ls /')" class="flex-1 p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[10px] transition font-mono">LIST (ls)</button>
+                                </div>
+                                <div class="border-t border-white/10 my-1"></div>
+                                <div class="flex gap-2">
+                                    <input type="text" id="file-input" class="flex-1 input-dark" placeholder="Filename...">
+                                </div>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button onclick="runFileCmd('script')" class="p-2 bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded text-[9px] hover:bg-purple-500 hover:text-white">RUN SCRIPT</button>
+                                    <button onclick="runFileCmd('cat')" class="p-2 bg-white/5 border border-white/10 rounded text-[9px] hover:bg-white/10">READ</button>
+                                    <button onclick="sendCommand('rm ' + document.getElementById('file-input').value)" class="p-2 bg-red-500/10 border border-red-500/30 text-red-500 rounded text-[9px] hover:bg-red-500 hover:text-white">DEL</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-5 rounded-xl">
+                            <h3 class="text-xs font-bold text-gray-400 mb-3">HARDWARE CTRL</h3>
+                            <div class="flex gap-2 mb-3">
+                                <input type="number" id="ch-input" class="w-12 input-dark" placeholder="CH">
+                                <button onclick="setChannel()" class="flex-1 bg-white/5 border border-white/10 rounded text-[10px] hover:bg-white/10">SET CH</button>
+                            </div>
+                            <div class="flex gap-1 justify-between">
+                                <div onclick="sendCommand('led -s #ff0000')" class="w-6 h-6 rounded-full bg-red-500 cursor-pointer border border-white/20 hover:scale-110 transition"></div>
+                                <div onclick="sendCommand('led -s #00ff00')" class="w-6 h-6 rounded-full bg-green-500 cursor-pointer border border-white/20 hover:scale-110 transition"></div>
+                                <div onclick="sendCommand('led -s #0000ff')" class="w-6 h-6 rounded-full bg-blue-500 cursor-pointer border border-white/20 hover:scale-110 transition"></div>
+                                <div onclick="sendCommand('led -s #ffffff')" class="w-6 h-6 rounded-full bg-white cursor-pointer border border-white/20 hover:scale-110 transition"></div>
+                                <div onclick="sendCommand('led -p rainbow')" class="w-6 h-6 rounded-full bg-gradient-to-r from-red-500 via-green-500 to-blue-500 cursor-pointer border border-white/20 hover:scale-110 transition" title="Rainbow"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-terminal" class="view-panel h-full p-4 pb-32 hidden flex flex-col">
+                    <div class="flex-1 bg-black/80 border border-white/10 rounded-xl p-3 font-mono text-[10px] text-cannibal-green overflow-y-auto whitespace-pre-wrap select-text" id="term-out">
+                        <span class="text-gray-600">// SERIAL MONITOR READY...</span>
+                    </div>
+                    <div class="mt-2 flex gap-2">
+                        <input type="text" id="cmd-input" class="flex-1 bg-white/5 border border-white/10 rounded p-2 text-white font-mono text-xs outline-none focus:border-cannibal-green" placeholder="> Enter command...">
+                        <button onclick="sendManual()" class="px-4 bg-cannibal-green/20 text-cannibal-green border border-cannibal-green/30 rounded font-bold hover:bg-cannibal-green hover:text-black text-xs">SEND</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="dock-wrapper">
+            <div onclick="switchView('wifi', this)" class="dock-icon wifi active" id="dock-wifi"><i class="fa-solid fa-wifi"></i><span>WIFI</span></div>
+            <div onclick="switchView('lan', this)" class="dock-icon lan"><i class="fa-solid fa-network-wired"></i><span>LAN</span></div>
+            <div onclick="switchView('ble', this)" class="dock-icon ble"><i class="fa-brands fa-bluetooth-b"></i><span>BLE</span></div>
+            <div onclick="switchView('gps', this)" class="dock-icon gps"><i class="fa-solid fa-location-crosshairs"></i><span>GPS</span></div>
+            
+            <div class="w-[1px] h-8 bg-white/10 mx-1"></div>
+            
+            <div onclick="switchView('portal', this)" class="dock-icon portal"><i class="fa-solid fa-dungeon"></i><span>PORTAL</span></div>
+            <div onclick="switchView('attack', this)" class="dock-icon attack"><i class="fa-solid fa-skull"></i><span>ATTACK</span></div>
+            
+            <div class="w-[1px] h-8 bg-white/10 mx-1"></div>
+            
+            <div onclick="switchView('loot', this)" class="dock-icon loot"><i class="fa-solid fa-sack-dollar"></i><span>LOOT</span></div>
+            <div onclick="switchView('terminal', this)" class="dock-icon term"><i class="fa-solid fa-terminal"></i><span>TERM</span></div>
+            <div onclick="switchView('utils', this)" class="dock-icon sys"><i class="fa-solid fa-sliders"></i><span>SYS</span></div>
+        </div>
+
+    </div>
+
+    <div id="wifi-modal" class="fixed inset-0 z-[80] bg-black/95 backdrop-blur-md hidden flex items-center justify-center transition-opacity">
+        <div class="flex flex-col w-full max-w-2xl h-[500px] border border-cannibal-blue/30 rounded-2xl relative shadow-[0_0_50px_rgba(5,217,232,0.15)] bg-[#050505] overflow-hidden">
+            <div class="bg-cannibal-blue/10 p-4 border-b border-cannibal-blue/20 flex justify-between items-center">
+                <h3 class="text-cannibal-blue font-bold tracking-widest text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-satellite-dish animate-pulse"></i> UPLINK MANAGER
+                </h3>
+                <button onclick="closeWifiModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="flex-1 flex relative overflow-hidden">
+                <div class="w-1/2 border-r border-white/10 flex flex-col">
+                    <div class="p-3 border-b border-white/10 flex gap-2">
+                        <button onclick="scanWifiModal()" class="flex-1 py-2 bg-white/5 border border-white/10 hover:bg-cannibal-blue hover:text-black rounded text-[10px] font-bold transition">SCAN AP (AUTO)</button>
+                    </div>
+                    <div id="wifi-connect-list" class="flex-1 overflow-y-auto p-2 space-y-1">
+                        <div class="text-center text-gray-600 mt-10 text-[10px] font-mono">Click SCAN AP (AUTO) to find networks.</div>
+                    </div>
+                </div>
+                <div class="w-1/2 p-6 flex flex-col items-center justify-center relative">
+                    <div id="wifi-form-placeholder" class="text-center opacity-50">
+                        <i class="fa-solid fa-wifi text-6xl text-gray-700 mb-4"></i>
+                        <p class="text-[10px] text-gray-400 font-mono">SELECT A NETWORK FROM LIST</p>
+                    </div>
+                    <div id="wifi-form-active" class="hidden w-full flex flex-col gap-4">
+                        <div class="text-center mb-2">
+                            <div class="text-xs text-gray-400 font-mono mb-1">SELECTED TARGET</div>
+                            <h2 id="wifi-target-ssid" class="text-xl font-bold text-white truncate"></h2>
+                            <div class="text-[10px] text-cannibal-blue" id="wifi-target-bssid"></div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[9px] text-gray-500 font-bold ml-1">PASSWORD</label>
+                            <input type="password" id="wifi-pass-input" class="w-full bg-white/5 border border-white/10 rounded p-3 text-white text-xs outline-none focus:border-cannibal-blue transition placeholder-gray-700" placeholder="WPA2 Key...">
+                        </div>
+                        <button onclick="submitWifiConnection()" class="w-full py-3 mt-2 bg-cannibal-blue text-black font-bold text-xs rounded shadow-[0_0_20px_rgba(5,217,232,0.4)] hover:shadow-[0_0_30px_rgba(5,217,232,0.6)] hover:scale-105 transition-all">CONNECT</button>
+                    </div>
+                    <div id="wifi-real-log" class="hidden absolute inset-0 bg-[#0a0a0a] flex flex-col z-20 p-4">
+                        <div class="flex justify-between items-center mb-2">
+                             <span class="text-[10px] text-cannibal-blue font-bold animate-pulse">CONNECTION LOG</span>
+                             <button onclick="resetWifiForm()" class="text-[9px] text-gray-500 hover:text-white">BACK</button>
+                        </div>
+                        <div class="flex-1 bg-black border border-white/10 rounded p-2 overflow-y-auto mini-term">
+                            <pre id="wifi-log-content" class="text-[9px] font-mono text-gray-300 whitespace-pre-wrap">Waiting for command...</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sigmon-modal" class="fixed inset-0 z-[70] bg-black/95 backdrop-blur-md hidden flex items-center justify-center transition-opacity">
+        <div class="flex flex-col items-center w-full max-w-md p-6 border border-gray-800 rounded-2xl relative shadow-[0_0_50px_rgba(0,0,0,0.8)] bg-[#050505]">
+            <button onclick="closeSigmonModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-xl font-black text-white tracking-widest mb-4">SIGMON <span class="text-cannibal-green text-xs">V2.1</span></h2>
+
+            <div id="sig-step-select" class="w-full flex flex-col gap-3">
+                <button onclick="sigmonSelectMode('ap')" class="h-20 bg-cannibal-green/10 border border-cannibal-green/30 hover:bg-cannibal-green hover:text-black text-cannibal-green rounded-xl transition flex flex-col items-center justify-center gap-2 group">
+                    <i class="fa-solid fa-wifi text-2xl group-hover:scale-110 transition"></i>
+                    <span class="text-xs font-bold tracking-widest">AP LISTENING (MODEM)</span>
+                </button>
+                <button onclick="sigmonSelectMode('channel')" class="h-20 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500 hover:text-white text-blue-400 rounded-xl transition flex flex-col items-center justify-center gap-2 group">
+                    <i class="fa-solid fa-layer-group text-2xl group-hover:scale-110 transition"></i>
+                    <span class="text-xs font-bold tracking-widest">CHANNEL LISTENING</span>
+                </button>
+            </div>
+
+            <div id="sig-step-ap-scan" class="w-full hidden h-[300px] flex flex-col">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[10px] text-gray-500 animate-pulse">SCANNING APs...</span>
+                    <button onclick="resetSigmon()" class="text-[9px] text-red-500 hover:underline">CANCEL</button>
+                </div>
+                <div id="sig-ap-list" class="flex-1 overflow-y-auto border border-white/10 rounded-lg bg-white/5 p-2 space-y-1">
+                    </div>
+            </div>
+
+            <div id="sig-step-ch-select" class="w-full hidden">
+                <p class="text-[10px] text-gray-500 text-center mb-4">SELECT CHANNEL TO MONITOR</p>
+                <div class="grid grid-cols-4 gap-2">
+                    <button onclick="startSigmon('channel', 1)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">1</button>
+                    <button onclick="startSigmon('channel', 2)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">2</button>
+                    <button onclick="startSigmon('channel', 3)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">3</button>
+                    <button onclick="startSigmon('channel', 4)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">4</button>
+                    <button onclick="startSigmon('channel', 5)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">5</button>
+                    <button onclick="startSigmon('channel', 6)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">6</button>
+                    <button onclick="startSigmon('channel', 7)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">7</button>
+                    <button onclick="startSigmon('channel', 8)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">8</button>
+                    <button onclick="startSigmon('channel', 9)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">9</button>
+                    <button onclick="startSigmon('channel', 10)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">10</button>
+                    <button onclick="startSigmon('channel', 11)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">11</button>
+                    <button onclick="startSigmon('channel', 12)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">12</button>
+                    <button onclick="startSigmon('channel', 13)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">13</button>
+                    <button onclick="startSigmon('channel', 14)" class="p-3 bg-white/5 border border-white/10 rounded hover:bg-blue-500 hover:text-white transition text-xs font-mono">14</button>
+                </div>
+            </div>
+
+            <div id="sig-step-monitor" class="w-full hidden">
+                <div class="text-[9px] text-gray-500 font-mono mb-4 text-center">
+                    TARGET: <span id="sigmon-target-name" class="text-white font-bold">--</span><br>
+                    <span id="sigmon-target-detail" class="text-gray-600">--</span>
+                </div>
+
+                <div class="w-full h-64 bg-black/50 rounded-xl border border-white/10 relative overflow-hidden mb-4 p-4">
+                    <div class="bar-container relative z-10">
+                         <div class="sig-bar h-5" id="sig-bar-main"></div>
+                    </div>
+                    <div class="absolute inset-0 grid grid-rows-5 divide-y divide-white/5 z-0"><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+
+                <div class="flex justify-between w-full gap-2">
+                    <div class="flex-1 glass-panel p-2 rounded text-center">
+                        <div class="text-[8px] text-gray-500">SIGNAL (RSSI)</div>
+                        <div class="text-2xl font-mono font-bold text-white" id="sigmon-rssi">--</div>
+                    </div>
+                    <div class="flex-1 glass-panel p-2 rounded text-center">
+                        <div class="text-[8px] text-gray-500">DISTANCE (EST)</div>
+                        <div class="text-2xl font-mono font-bold text-white" id="sigmon-dist">--</div>
+                    </div>
+                </div>
+                
+                <button onclick="resetSigmon()" class="w-full mt-4 py-2 bg-red-500/10 border border-red-500/30 text-red-500 rounded font-bold text-[10px] hover:bg-red-500 hover:text-white transition">STOP & BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sniffer-modal" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-[#111] border border-cannibal-purple/30 rounded-2xl w-full max-w-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
+            <div class="bg-cannibal-purple/10 p-4 border-b border-cannibal-purple/20 flex justify-between items-center">
+                <h3 class="text-cannibal-purple font-bold tracking-widest text-sm"><i class="fa-solid fa-mask mr-2"></i>SNIFFING MATRIX</h3>
+                <button onclick="toggleSniffModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div class="p-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button onclick="runSniffer('sniffpmkid', this)" class="sniff-btn p-4 bg-white/5 rounded border border-white/5 hover:border-cannibal-purple hover:text-cannibal-purple transition flex flex-col items-center gap-2 group">
+                        <i class="fa-solid fa-key text-xl text-gray-500 group-hover:text-cannibal-purple"></i>
+                        <span class="text-[10px] font-bold">PMKID</span>
+                    </button>
+                    <button onclick="runSniffer('sniffprobe', this)" class="sniff-btn p-4 bg-white/5 rounded border border-white/5 hover:border-cannibal-purple hover:text-cannibal-purple transition flex flex-col items-center gap-2 group">
+                        <i class="fa-solid fa-envelope-open text-xl text-gray-500 group-hover:text-cannibal-purple"></i>
+                        <span class="text-[10px] font-bold">PROBE</span>
+                    </button>
+                    <button onclick="runSniffer('sniffdeauth', this)" class="sniff-btn p-4 bg-white/5 rounded border border-white/5 hover:border-cannibal-purple hover:text-cannibal-purple transition flex flex-col items-center gap-2 group">
+                        <i class="fa-solid fa-ban text-xl text-gray-500 group-hover:text-cannibal-purple"></i>
+                        <span class="text-[10px] font-bold">DEAUTH</span>
+                    </button>
+                    <button onclick="runSniffer('sniffesp', this)" class="sniff-btn p-4 bg-white/5 rounded border border-white/5 hover:border-cannibal-purple hover:text-cannibal-purple transition flex flex-col items-center gap-2 group">
+                        <i class="fa-solid fa-microchip text-xl text-gray-500 group-hover:text-cannibal-purple"></i>
+                        <span class="text-[10px] font-bold">ESP</span>
+                    </button>
+                    <button onclick="runSniffer('sniffpwn', this)" class="sniff-btn p-4 bg-white/5 rounded border border-white/5 hover:border-cannibal-purple hover:text-cannibal-purple transition flex flex-col items-center gap-2 group">
+                        <i class="fa-solid fa-ghost text-xl text-gray-500 group-hover:text-cannibal-purple"></i>
+                        <span class="text-[10px] font-bold">PWNAGOTCHI</span>
+                    </button>
+                    <button onclick="runSniffer('sniffbeacon', this)" class="sniff-btn p-4 bg-white/5 rounded border border-white/5 hover:border-cannibal-purple hover:text-cannibal-purple transition flex flex-col items-center gap-2 group">
+                        <i class="fa-solid fa-tower-broadcast text-xl text-gray-500 group-hover:text-cannibal-purple"></i>
+                        <span class="text-[10px] font-bold">BEACON</span>
+                    </button>
+                    <button onclick="runSniffer('sniffpinescan', this)" class="sniff-btn p-4 bg-white/5 rounded border border-white/5 hover:border-yellow-500 hover:text-yellow-500 transition flex flex-col items-center gap-2 group">
+                        <i class="fa-solid fa-pineapple text-xl text-gray-500 group-hover:text-yellow-500"></i>
+                        <span class="text-[10px] font-bold">PINEAPPLE</span>
+                    </button>
+                    <button onclick="runSniffer('sniffraw', this)" class="sniff-btn p-4 bg-white/5 rounded border border-white/5 hover:border-cannibal-purple hover:text-cannibal-purple transition flex flex-col items-center gap-2 group">
+                        <i class="fa-solid fa-code text-xl text-gray-500 group-hover:text-cannibal-purple"></i>
+                        <span class="text-[10px] font-bold">RAW</span>
+                    </button>
+                </div>
+                
+                <div class="mt-4 border-t border-white/10 pt-4 flex justify-between items-center">
+                     <span class="text-[9px] text-gray-600">STATUS: <span id="sniffer-status" class="text-gray-400">IDLE</span></span>
+                     <button onclick="sendCommand('stopscan'); document.getElementById('sniffer-status').innerText='STOPPED'; document.querySelectorAll('.sniff-btn').forEach(b => b.classList.remove('active-sniff'));" class="px-6 py-2 bg-red-500/10 border border-red-500/30 text-red-500 rounded font-bold text-[10px] hover:bg-red-500 hover:text-white transition">STOP SNIFFING</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="station-modal" class="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border border-cannibal-orange/30 rounded-2xl w-full max-w-4xl h-[80vh] flex flex-col shadow-[0_0_50px_rgba(255,159,28,0.2)] relative overflow-hidden">
+            <div class="bg-cannibal-orange/10 p-4 border-b border-cannibal-orange/20 flex justify-between items-center">
+                <h3 class="text-cannibal-orange font-bold tracking-widest text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-satellite-dish animate-pulse"></i> STATION MATRIX
+                </h3>
+                <button onclick="closeStationModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 relative bg-gradient-to-b from-[#0a0a0a] to-[#000]" id="station-grid">
+                 <div class="text-center text-cannibal-orange/50 mt-20" id="sta-loading">
+                    <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4"></i>
+                    <p class="font-mono text-xs tracking-widest">SCANNING SPECTRUM...</p>
+                 </div>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="station-card-container"></div>
+            </div>
+
+            <div class="p-4 border-t border-white/10 bg-[#111] flex justify-between items-center">
+                 <div class="text-[10px] text-gray-500 font-mono">DETECTED: <span id="sta-modal-count" class="text-white font-bold">0</span></div>
+                 <button onclick="closeStationModal()" class="px-6 py-2 bg-red-500/10 text-red-500 border border-red-500/30 rounded font-bold text-[10px] hover:bg-red-500 hover:text-white transition shadow-[0_0_10px_rgba(239,68,68,0.2)]">STOP SCAN</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let port, writer, reader;
+        let lineBuffer = "";
+        let isSelectionMode = false;
+        
+        let selectedTargets = new Map(); 
+        let isScanning = false;
+        let lootCounter = 0;
+        let currentView = 'wifi';
+        
+        // --- SIGMON VARIABLES ---
+        let sigmonActive = false;
+        let sigmonMode = null; 
+        let sigmonTargetData = null; 
+        let isSigmonScanning = false; 
+
+        // --- STATION MODAL VARIABLES (GÜNCELLENMİŞ) ---
+        let isStationModalOpen = false;
+        let knownAPs = new Map();     // AP İsimlerini (SSID) tutar
+        let stationBuffer = new Map(); // Canlı verileri bellekte tutar
+        let stationRenderInterval = null; // Render döngüsünü kontrol eder
+
+        // --- WIFI MODAL VARIABLES ---
+        let isWifiModalOpen = false;
+        let currentWifiTarget = null; 
+
+        // --- LAN TARGET VARIABLES ---
+        let currentLanTargetIndex = null;
+
+        function stripAnsi(str) {
+            return str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+        }
+
+        function getSignalQuality(rssi) {
+            const strength = parseInt(rssi);
+            if (strength > -60) return { color: 'text-cannibal-green', icon: 'fa-solid fa-wifi', label: 'FULL' };
+            if (strength > -75) return { color: 'text-yellow-400', icon: 'fa-solid fa-wifi', label: 'MID' };
+            return { color: 'text-cannibal-red', icon: 'fa-solid fa-wifi', label: 'LOW' };
+        }
+
+        async function connectSerial() {
+            if ("serial" in navigator) {
+                try {
+                    port = await navigator.serial.requestPort();
+                    await port.open({ baudRate: 115200 });
+                    document.getElementById('status-text').innerText = "CONNECTED";
+                    document.getElementById('status-text').classList.add('text-cannibal-green');
+                    transitionToDashboard();
+                    readLoop();
+                    setTimeout(() => sendCommand('stopscan'), 200);
+                } catch(e) { console.error(e); alert("Connection Failed!"); }
+            } else { alert("Browser does not support Serial API."); }
+        }
+
+        document.getElementById('connect-btn').addEventListener('click', connectSerial);
+
+        function transitionToDashboard() {
+            const intro = document.getElementById('intro-screen');
+            const dash = document.getElementById('dashboard');
+            intro.style.opacity = '0';
+            intro.style.pointerEvents = 'none';
+            dash.classList.remove('hidden');
+            setTimeout(() => { intro.classList.add('hidden'); dash.style.opacity = '1'; }, 1000);
+        }
+
+        async function readLoop() {
+            const textDecoder = new TextDecoderStream();
+            port.readable.pipeTo(textDecoder.writable);
+            reader = textDecoder.readable.getReader();
+            const writerEncoder = new TextEncoderStream();
+            writerEncoder.readable.pipeTo(port.writable);
+            writer = writerEncoder.writable.getWriter();
+            try {
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    if (value) processSerialData(value);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function processSerialData(data) {
+            const cleanData = stripAnsi(data);
+
+            if(isWifiModalOpen) {
+                if(!document.getElementById('wifi-real-log').classList.contains('hidden')) {
+                    const logEl = document.getElementById('wifi-log-content');
+                    logEl.textContent += data;
+                    logEl.scrollTop = logEl.scrollHeight;
+                    
+                    if(cleanData.includes("Connected") || cleanData.includes("IP Address")) {
+                        document.getElementById('wifi-status-icon').classList.remove('hidden');
+                        document.getElementById('uplink-status').innerText = "ONLINE / SECURE";
+                        document.getElementById('uplink-status').classList.replace('text-gray-400', 'text-cannibal-green');
+                        document.getElementById('uplink-anim-box').classList.remove('opacity-30', 'grayscale');
+                    }
+                }
+                if (lineBuffer.includes("\n")) {
+                     const match = cleanData.match(/^\[(\d+)\](?:.*?)\s+(.*?)\s+(-?\d+)$/m);
+                     if (match) {
+                        addWifiToModalList(match[1], match[2].trim(), match[3], "CH?");
+                     }
+                }
+            }
+
+            if(!sigmonActive && !isWifiModalOpen) {
+                const term = document.getElementById('term-out');
+                term.textContent += data;
+                if(term.textContent.length > 5000) term.textContent = term.textContent.slice(-5000);
+                term.scrollTop = term.scrollHeight;
+            }
+
+            lineBuffer += data;
+            if (lineBuffer.includes("\n")) {
+                const lines = lineBuffer.split("\n");
+                lineBuffer = lines.pop(); 
+                lines.forEach(line => {
+                    const cleanLine = stripAnsi(line.trim());
+                    parseLine(cleanLine);
+                });
+            }
+        }
+
+        function parseLine(line) {
+            // LOOT CATCHER
+            if (line.includes("PMKID") || line.includes("Handshake") || line.includes("EAPOL")) { addLoot(line); }
+
+           // LAN / ARP PARSER
+            if (currentView === 'lan') {
+                 const txt = stripAnsi(line).trim();
+                 const lowerTxt = txt.toLowerCase();
+
+                 let matches = txt.match(/(\d+\.\d+\.\d+\.\d+)[\s\t]+(?:at)?[\s\t]*([0-9a-fA-F:]{17})/);
+                 if(matches) {
+                     if(matches[1] !== "0.0.0.0") {
+                        addLanDevice(matches[1], matches[2], "-1");
+                     }
+                 } 
+                 else {
+                     if(
+                        !lowerTxt.includes("ip address:") && !lowerTxt.includes("gateway:") && !lowerTxt.includes("netmask:") &&
+                        !lowerTxt.includes("iplist:") && !lowerTxt.includes("scanning") && !lowerTxt.includes("scan") &&
+                        !lowerTxt.includes("ping") && !lowerTxt.includes("sending") && !lowerTxt.includes("sent") &&
+                        !lowerTxt.includes("timeout") && !lowerTxt.includes("unreachable") && !lowerTxt.includes("stop")         
+                     ) {
+                         const ipOnly = txt.match(/(\d+\.\d+\.\d+\.\d+)/);
+                         if(ipOnly) {
+                             const foundIp = ipOnly[1];
+                             if(foundIp !== "0.0.0.0" && !foundIp.endsWith(".255")) {
+                                 if(lowerTxt.includes("reply") || lowerTxt.includes("bytes=") || txt.length < 16) {
+                                     addLanDevice(foundIp, "MAC_PENDING", "-1");
+                                 }
+                             }
+                         }
+                     }
+                 }
+            }
+            
+            // --- SIGMON SCANNING ---
+            if (isSigmonScanning) {
+                const scanMatch = line.match(/RSSI:\s*(-?\d+)\s+Ch:\s*(\d+)\s+BSSID:\s*([0-9a-fA-F:]+)\s+ESSID:\s*(.*)/);
+                if (scanMatch) {
+                    addApToSigmonList(scanMatch[3], scanMatch[4].trim(), scanMatch[1], scanMatch[2]);
+                } else if (line.includes("BSSID:") && line.includes("ESSID:")) {
+                        const bssidM = line.match(/BSSID:\s*([0-9a-fA-F:]+)/);
+                        const ssidM = line.match(/ESSID:\s*(.*?)(?:\s+|$)/);
+                        const rssiM = line.match(/RSSI:\s*(-?\d+)/);
+                        const chM = line.match(/Ch:\s*(\d+)/);
+                        if (bssidM && ssidM) {
+                            addApToSigmonList(bssidM[1], ssidM[1].trim(), rssiM ? rssiM[1] : "-??", chM ? chM[1] : "?");
+                        }
+                }
+            }
+
+            // --- REAL-TIME SIGMON LOGIC ---
+            if (sigmonActive) {
+                let rssiVal = null;
+                const rssiMatch = line.match(/RSSI:?\s*(-?\d+)/i) || line.match(/[\(]\s*(-?\d+)\s*dBm[\)]/i) || line.match(/(?:^|\s)(-([3-9]\d|\d{3}))(?:\s|$)/); 
+                if (rssiMatch) {
+                     rssiVal = parseInt(rssiMatch[1]);
+                     if (rssiVal > -10 || rssiVal < -100) rssiVal = null;
+                }
+                if (rssiVal !== null) {
+                    if (sigmonMode === 'ap' && sigmonTargetData) {
+                        const targetMAC = sigmonTargetData.bssid.toUpperCase();
+                        const targetSSID = sigmonTargetData.ssid.toUpperCase();
+                        const lineUpper = line.toUpperCase();
+                        let isMatch = false;
+                        if (lineUpper.includes(targetMAC)) isMatch = true;
+                        else if (targetSSID.length > 3 && lineUpper.includes(targetSSID.substring(0, 4))) isMatch = true;
+                        if (isMatch) updateSigmonVisuals(rssiVal);
+                    }
+                    else if (sigmonMode === 'channel') {
+                        updateSigmonVisuals(rssiVal);
+                    }
+                }
+            }
+
+            // WIFI MODAL PARSING
+            if (isWifiModalOpen) {
+                const listMatch = line.match(/^\[(\d+)\](?:.*?)\s+(.*?)\s+(-?\d+)$/);
+                if (listMatch) {
+                    addWifiToModalList(listMatch[1], listMatch[2].trim(), listMatch[3], "CH?");
+                    return; 
+                }
+                if (line.includes("ESSID:")) {
+                    const ssidMatch = line.match(/ESSID:\s*(.*?)(?:\s+|$)/);
+                    const rssiMatch = line.match(/RSSI:\s*(-?\d+)/);
+                    if (ssidMatch && ssidMatch[1]) {
+                        let ssid = ssidMatch[1].trim();
+                        if(ssid) addWifiToModalList("?", ssid, rssiMatch ? rssiMatch[1] : "-??", "SCAN");
+                    }
+                }
+            }
+
+            // --- STATION SCAN PARSER (GÜNCELLENMİŞ) ---
+            if (isStationModalOpen) {
+                // Station -> AP Yönü
+                const matchStaToAp = line.match(/sta:\s*([0-9a-fA-F:]{17})\s*->\s*ap:\s*([0-9a-fA-F:]{17})/);
+                if (matchStaToAp) {
+                    updateStationMemory(matchStaToAp[1], matchStaToAp[2], "STA", "AP");
+                    return;
+                }
+                // AP -> Station Yönü
+                const matchApToSta = line.match(/ap:\s*([0-9a-fA-F:]{17})\s*->\s*sta:\s*([0-9a-fA-F:]{17})/);
+                if (matchApToSta) {
+                    updateStationMemory(matchApToSta[1], matchApToSta[2], "AP", "STA");
+                    return;
+                }
+            }
+
+            // GENERAL SCAN LOGIC
+            if (!isSelectionMode) { 
+                if (currentView === 'wifi') {
+                    let ssid, bssid, rssi, ch;
+                    const apMatch1 = line.match(/RSSI:\s*(-?\d+)\s+Ch:\s*(\d+)\s+BSSID:\s*([0-9a-fA-F:]+)\s+ESSID:\s*(.*)/);
+                    if (apMatch1) {
+                         ssid = apMatch1[4].trim(); if(ssid.includes("Beacon")) ssid = ssid.split("Beacon")[0].trim();
+                         bssid = apMatch1[3]; rssi = apMatch1[1]; ch = apMatch1[2];
+                    }
+                    else {
+                        const apMatch2 = line.match(/BSSID:\s*([0-9a-fA-F:]+)\s+ESSID:\s*(.*)/);
+                        if(apMatch2) {
+                             ssid = apMatch2[2].trim(); if(ssid.includes("Beacon")) ssid = ssid.split("Beacon")[0].trim();
+                             bssid = apMatch2[1];
+                             const rssiMatch = line.match(/RSSI:\s*(-?\d+)\s+Ch:\s*(\d+)/);
+                             if(rssiMatch) { rssi = rssiMatch[1]; ch = rssiMatch[2]; }
+                        }
+                    }
+
+                    if(bssid && ssid) {
+                        knownAPs.set(bssid, ssid);
+                        if (currentView === 'wifi' && !isWifiModalOpen && !isStationModalOpen) {
+                           if(rssi && ch) updateListUI("?", ssid, rssi, bssid, ch, 'wifi');
+                        }
+                        return; 
+                    }
+                }
+            }
+
+            if (isSelectionMode && currentView === 'wifi') {
+                const listMatch = line.match(/^\[(\d+)\]\[CH:(\d+)\]\s+(.*?)\s+(-?\d+)$/);
+                if (listMatch) {
+                    updateListUI(listMatch[1], listMatch[3].trim(), listMatch[4], "UNKNOWN_MAC", listMatch[2], 'wifi');
+                }
+                return;
+            }
+        }
+
+        function openWifiModal() {
+            document.getElementById('wifi-modal').classList.remove('hidden');
+            document.getElementById('wifi-connect-list').innerHTML = `<div class="text-center text-gray-600 mt-10 text-[10px] font-mono">Click SCAN AP (AUTO) to find networks.</div>`;
+            isWifiModalOpen = true;
+            currentWifiTarget = null;
+            resetWifiForm();
+        }
+
+        function closeWifiModal() {
+            document.getElementById('wifi-modal').classList.add('hidden');
+            isWifiModalOpen = false;
+        
+        }
+
+        function scanWifiModal() {
+            const listEl = document.getElementById('wifi-connect-list');
+            sendCommand('scanap');
+            listEl.innerHTML = `<div class="flex flex-col items-center justify-center mt-10 gap-2"><i class="fa-solid fa-satellite-dish fa-spin text-cannibal-green text-2xl"></i><span class="text-[10px] text-cannibal-green font-mono animate-pulse">SCANNING AIRWAVES (4s)...</span></div>`;
+            setTimeout(() => {
+                sendCommand('stopscan');
+                listEl.innerHTML = `<div class="flex flex-col items-center justify-center mt-10 gap-2"><i class="fa-solid fa-hand text-red-500 text-2xl"></i><span class="text-[10px] text-gray-500 font-mono">STOPPING & PREPARING LIST...</span></div>`;
+                setTimeout(() => {
+                    sendCommand('list -a');
+                    listEl.innerHTML = `<div class="flex flex-col items-center justify-center mt-10 gap-2"><i class="fa-solid fa-list-ul text-blue-400 fa-bounce text-2xl"></i><span class="text-[10px] text-blue-400 font-mono">PARSING DATA...</span></div>`;
+                }, 1000);
+            }, 4000);
+        }
+
+        function addWifiToModalList(index, ssid, rssi, ch) {
+            const list = document.getElementById('wifi-connect-list');
+            if(list.innerText.includes('PARSING') || list.innerText.includes('SCANNING') || list.innerText.includes('STOPPING') || list.innerText.includes('Click SCAN')) list.innerHTML = '';
+            
+            const existing = Array.from(list.children).find(child => {
+                const childSSID = child.querySelector('.ssid-name')?.innerText;
+                if(index === "?") return childSSID === ssid;
+                return child.innerText.includes(`[${index}]`);
+            });
+            if(existing) return;
+
+            const div = document.createElement('div');
+            div.className = "flex items-center justify-between p-2 bg-white/5 border border-white/5 rounded hover:bg-cannibal-blue/20 hover:border-cannibal-blue cursor-pointer transition group";
+            div.onclick = () => selectWifiTarget(index, ssid, "N/A");
+            
+            div.innerHTML = `
+                <div class="flex items-center gap-2 overflow-hidden">
+                    <span class="text-[9px] font-mono text-gray-500">[${index}]</span>
+                    <span class="ssid-name text-xs font-bold text-gray-300 group-hover:text-white truncate">${ssid}</span>
+                </div>
+                <div class="text-[9px] font-mono text-cannibal-blue">${rssi}dBm</div>
+            `;
+            list.appendChild(div);
+        }
+
+        function selectWifiTarget(index, ssid, bssid) {
+            if(index === "?") { alert("Please wait for full list (Numbers) before connecting."); return; }
+            currentWifiTarget = { index, ssid, bssid };
+            document.getElementById('wifi-form-placeholder').classList.add('hidden');
+            document.getElementById('wifi-form-active').classList.remove('hidden');
+            document.getElementById('wifi-real-log').classList.add('hidden');
+            document.getElementById('wifi-target-ssid').innerText = ssid;
+            document.getElementById('wifi-target-bssid').innerText = `INDEX: ${index}`;
+            document.getElementById('wifi-pass-input').value = '';
+            document.getElementById('wifi-pass-input').focus();
+        }
+
+        function resetWifiForm() {
+            document.getElementById('wifi-form-placeholder').classList.remove('hidden');
+            document.getElementById('wifi-form-active').classList.add('hidden');
+            document.getElementById('wifi-real-log').classList.add('hidden');
+        }
+
+        function submitWifiConnection() {
+            const pass = document.getElementById('wifi-pass-input').value;
+            if(!currentWifiTarget) return;
+            sendCommand(`join -a ${currentWifiTarget.index} -p ${pass}`);
+            document.getElementById('wifi-form-active').classList.add('hidden');
+            document.getElementById('wifi-real-log').classList.remove('hidden');
+            document.getElementById('wifi-log-content').textContent = `> Sending Join Request to [${currentWifiTarget.index}]...\n`;
+        }
+
+        function openSigmonModal() {
+            document.getElementById('sigmon-modal').classList.remove('hidden');
+            resetSigmon(); 
+        }
+
+        function closeSigmonModal() {
+            document.getElementById('sigmon-modal').classList.add('hidden');
+            stopSigmon();
+        }
+
+        function resetSigmon() {
+            document.getElementById('sig-step-select').classList.remove('hidden');
+            document.getElementById('sig-step-ap-scan').classList.add('hidden');
+            document.getElementById('sig-step-ch-select').classList.add('hidden');
+            document.getElementById('sig-step-monitor').classList.add('hidden');
+            stopSigmon();
+            document.getElementById('sig-ap-list').innerHTML = '';
+        }
+
+        function stopSigmon() {
+            sigmonActive = false;
+            isSigmonScanning = false;
+            sigmonMode = null;
+            sigmonTargetData = null;
+            sendCommand('stopscan');
+        }
+
+        function sigmonSelectMode(mode) {
+            document.getElementById('sig-step-select').classList.add('hidden');
+            if (mode === 'ap') {
+                document.getElementById('sig-step-ap-scan').classList.remove('hidden');
+                isSigmonScanning = true;
+                sendCommand('stopscan');
+                setTimeout(() => sendCommand('scanap'), 300);
+            } else {
+                document.getElementById('sig-step-ch-select').classList.remove('hidden');
+            }
+        }
+
+        function addApToSigmonList(bssid, ssid, rssi, ch) {
+            const list = document.getElementById('sig-ap-list');
+            if (document.getElementById(`sig-ap-${bssid}`)) return; 
+            const safeSSID = ssid.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            const div = document.createElement('div');
+            div.id = `sig-ap-${bssid}`;
+            div.className = "flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded hover:bg-cannibal-green/10 hover:border-cannibal-green cursor-pointer transition group";
+            div.onclick = () => startSigmon('ap', { bssid, ssid, ch });
+            div.innerHTML = `
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold text-white group-hover:text-cannibal-green">${safeSSID || 'HIDDEN'}</span>
+                    <span class="text-[9px] text-gray-500 font-mono">${bssid}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-[9px] font-mono text-gray-400">CH:${ch}</span>
+                    <span class="text-[9px] font-mono font-bold text-cannibal-green">${rssi}dBm</span>
+                </div>
+            `;
+            list.appendChild(div);
+        }
+
+        function startSigmon(mode, data) {
+            stopSigmon();
+            document.getElementById('sig-step-ap-scan').classList.add('hidden');
+            document.getElementById('sig-step-ch-select').classList.add('hidden');
+            document.getElementById('sig-step-monitor').classList.remove('hidden');
+
+            sigmonActive = true;
+            sigmonMode = mode;
+
+            if (mode === 'ap') {
+                sigmonTargetData = data;
+                document.getElementById('sigmon-target-name').innerText = data.ssid;
+                document.getElementById('sigmon-target-detail').innerText = `${data.bssid} (CH: ${data.ch})`;
+                setTimeout(() => sendCommand(`channel -s ${data.ch}`), 200);
+                setTimeout(() => sendCommand(`sniffbeacon`), 500);
+            } else if (mode === 'channel') {
+                sigmonTargetData = { channel: data };
+                document.getElementById('sigmon-target-name').innerText = `CHANNEL ${data}`;
+                document.getElementById('sigmon-target-detail').innerText = "ALL TRAFFIC MONITORING";
+                setTimeout(() => sendCommand(`channel -s ${data}`), 200);
+                setTimeout(() => sendCommand(`sniffbeacon`), 500);
+            }
+        }
+
+        function updateSigmonVisuals(rssi) {
+            const bar = document.getElementById('sig-bar-main');
+            const rssiVal = document.getElementById('sigmon-rssi');
+            const distVal = document.getElementById('sigmon-dist');
+
+            rssiVal.innerText = rssi;
+            let height = (parseInt(rssi) + 100) * 1.5;
+            if(height < 5) height = 5;
+            if(height > 100) height = 100;
+            bar.style.height = height + "%";
+
+            if(parseInt(rssi) > -60) {
+                bar.style.background = "#00ff9d"; bar.style.boxShadow = "0 0 20px #00ff9d";
+            } else if(parseInt(rssi) > -80) {
+                bar.style.background = "#fbbf24"; bar.style.boxShadow = "0 0 20px #fbbf24";
+            } else {
+                bar.style.background = "#ef4444"; bar.style.boxShadow = "0 0 20px #ef4444";
+            }
+
+            const txPower = -35; 
+            const n = 3.0; 
+            let dist = Math.pow(10, (txPower - parseInt(rssi)) / (10 * n));
+            distVal.innerText = dist.toFixed(1);
+        }
+
+        // --- YENİ STATION FONKSİYONLARI (BUFFER & RENDER) ---
+
+        function openStationModal() {
+            document.getElementById('station-modal').classList.remove('hidden');
+            document.getElementById('station-card-container').innerHTML = '';
+            document.getElementById('sta-loading').classList.remove('hidden');
+            
+            // Buffer'ı temizle ve döngüyü başlat
+            stationBuffer.clear();
+            startStationRenderLoop(); 
+            
+            document.getElementById('sta-modal-count').innerText = "0";
+            isStationModalOpen = true;
+            
+            sendCommand('stopscan');
+            setTimeout(() => {
+                sendCommand('scansta');
+            }, 300);
+        }
+
+        function closeStationModal() {
+            document.getElementById('station-modal').classList.add('hidden');
+            isStationModalOpen = false;
+            // Döngüyü durdur
+            if(stationRenderInterval) clearInterval(stationRenderInterval);
+            sendCommand('stopscan');
+        }
+
+        // 1. Veriyi Hafızaya Al
+        function updateStationMemory(srcMac, dstMac, typeSrc, typeDst) {
+            const connectionKey = `${srcMac}->${dstMac}`;
+            const now = Date.now();
+            
+            if (!stationBuffer.has(connectionKey)) {
+                stationBuffer.set(connectionKey, {
+                    src: srcMac,
+                    dst: dstMac,
+                    srcType: typeSrc,
+                    dstType: typeDst,
+                    count: 0,
+                    firstSeen: now,
+                    lastSeen: now,
+                    isNew: true 
+                });
+            }
+
+            const entry = stationBuffer.get(connectionKey);
+            entry.count++;
+            entry.lastSeen = now;
+            entry.srcName = (typeSrc === 'AP' && knownAPs.has(srcMac)) ? knownAPs.get(srcMac) : srcMac;
+            entry.dstName = (typeDst === 'AP' && knownAPs.has(dstMac)) ? knownAPs.get(dstMac) : dstMac;
+        }
+
+        // 2. Render Döngüsü (500ms)
+        function startStationRenderLoop() {
+            if(stationRenderInterval) clearInterval(stationRenderInterval);
+            
+            stationRenderInterval = setInterval(() => {
+                const container = document.getElementById('station-card-container');
+                const now = Date.now();
+                const TIMEOUT_MS = 10000; 
+
+                // Temizlik
+                stationBuffer.forEach((data, key) => {
+                    if (now - data.lastSeen > TIMEOUT_MS) {
+                        const card = document.getElementById(`card-${key}`);
+                        if (card) card.remove();
+                        stationBuffer.delete(key);
+                    }
+                });
+
+                // Yükleme ekranını gizle
+                if(stationBuffer.size > 0) document.getElementById('sta-loading').classList.add('hidden');
+
+                // Çizim
+                stationBuffer.forEach((data, key) => {
+                    let card = document.getElementById(`card-${key}`);
+
+                    if (!card) {
+                        card = createStationCard(key, data);
+                        container.prepend(card);
+                    } else {
+                        const badge = card.querySelector('.count-badge');
+                        if (badge.innerText != data.count) {
+                            badge.innerText = data.count;
+                            badge.classList.remove('count-pop');
+                            void badge.offsetWidth; 
+                            badge.classList.add('count-pop');
+                            
+                            const bar = card.querySelector('.activity-bar');
+                            bar.style.opacity = "1";
+                            bar.style.boxShadow = "0 0 10px #ff9f1c";
+                        } else {
+                            if (now - data.lastSeen > 2000) {
+                                const bar = card.querySelector('.activity-bar');
+                                bar.style.opacity = "0.3";
+                                bar.style.boxShadow = "none";
+                            }
+                        }
+                    }
+                });
+                
+                document.getElementById('sta-modal-count').innerText = stationBuffer.size;
+                
+            }, 500); 
+        }
+
+        // 3. Kart Oluşturucu
+        function createStationCard(key, data) {
+            const div = document.createElement('div');
+            div.id = `card-${key}`;
+            div.className = "sta-card-anim bg-white/5 border border-white/5 rounded-xl p-3 flex items-center justify-between gap-2 hover:bg-white/10 transition group w-full";
+            
+            let srcIcon = data.srcType === 'AP' ? 'fa-wifi' : 'fa-mobile-screen';
+            let dstIcon = data.dstType === 'AP' ? 'fa-wifi' : 'fa-mobile-screen';
+            
+            const formatName = (name) => {
+                if(name.length > 15) return name.substring(0,12) + "...";
+                return name;
+            }
+
+            div.innerHTML = `
+                <div class="flex flex-col items-center gap-1 w-24">
+                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                        <i class="fa-solid ${srcIcon} text-gray-400"></i>
+                    </div>
+                    <span class="text-[9px] font-mono text-gray-400 truncate w-full text-center">${formatName(data.srcName || data.src)}</span>
+                </div>
+                
+                <div class="flex-1 flex flex-col items-center justify-center relative px-2">
+                    <div class="count-badge bg-cannibal-orange text-black rounded px-2 py-0.5 text-[10px] font-bold shadow-[0_0_10px_rgba(255,159,28,0.5)] mb-1">
+                        ${data.count}
+                    </div>
+                    <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                        <div class="activity-bar bg-cannibal-orange h-full w-full transition-all duration-500"></div>
+                    </div>
+                    <i class="fa-solid fa-arrow-right text-gray-700 text-[10px] mt-1"></i>
+                </div>
+
+                <div class="flex flex-col items-center gap-1 w-24">
+                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                        <i class="fa-solid ${dstIcon} text-gray-500"></i>
+                    </div>
+                    <span class="text-[9px] font-bold text-cannibal-orange truncate w-full text-center">${formatName(data.dstName || data.dst)}</span>
+                </div>
+            `;
+            return div;
+        }
+
+        // --- LAN FONKSİYONLARI ---
+
+        function addLanDevice(ip, mac, index) {
+            const list = document.getElementById('lan-list');
+            if(list.innerText.includes('AWAITING') || list.innerText.includes('NO DATA')) list.innerHTML = '';
+            if(document.getElementById(`lan-${ip}`)) return;
+
+            const macDisplay = (mac === "MAC_PENDING") 
+                ? `<div class="text-gray-600 text-[9px] font-mono tracking-wider">MAC: N/A (ARP)</div>` 
+                : `<div class="text-gray-500 text-[10px] font-mono tracking-wider">${mac.toUpperCase()}</div>`;
+
+            const idBadge = (index && index !== "-1" && index !== "?") 
+                ? `<span class="px-2 py-0.5 bg-cannibal-blue/10 text-cannibal-blue rounded text-[9px] font-bold border border-cannibal-blue/20">ID: ${index}</span>` 
+                : '';
+
+            const div = document.createElement('div');
+            div.id = `lan-${ip}`;
+            div.dataset.index = index || "-1"; 
+            div.dataset.ip = ip;
+            div.className = "lan-card rounded-xl p-4 cursor-pointer group flex flex-col gap-1";
+            div.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="w-8 h-8 rounded bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-cannibal-blue/50 group-hover:text-cannibal-blue transition"><i class="fa-solid fa-desktop text-gray-500 group-hover:text-cannibal-blue"></i></div>
+                    ${idBadge}
+                </div>
+                <div class="mt-2"><div class="text-white text-sm font-mono font-bold group-hover:text-cannibal-blue transition">${ip}</div>${macDisplay}</div>
+                <div class="mt-2 flex items-center gap-2 opacity-50 group-hover:opacity-100 transition"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div><span class="text-[9px] text-gray-400">HOST DETECTED</span></div>
+                <div class="tech-line"></div>
+            `;
+            div.onclick = () => selectLanTarget(div, ip, index);
+            list.appendChild(div);
+            document.getElementById('lan-count').innerText = list.children.length + " ENTITIES";
+        }
+
+        function selectLanTarget(element, ip, index) {
+            document.querySelectorAll('.lan-card').forEach(c => c.classList.remove('active-target'));
+            element.classList.add('active-target');
+            document.getElementById('target-ip').value = ip;
+            currentLanTargetIndex = index;
+        }
+
+        function addLoot(text) {
+            const container = document.getElementById('loot-container');
+            if(lootCounter === 0) container.innerHTML = "";
+            lootCounter++;
+            const div = document.createElement('div');
+            div.className = "p-3 bg-cannibal-gold/10 border border-cannibal-gold/30 rounded-lg text-[10px] font-mono break-all animate-pulse-glow";
+            div.innerHTML = `<span class="text-cannibal-gold font-bold">LOOT #${lootCounter}:</span> <span class="text-gray-300">${text}</span>`;
+            container.prepend(div);
+            document.querySelector('.dock-icon.loot').classList.add('animate-bounce');
+            setTimeout(() => document.querySelector('.dock-icon.loot').classList.remove('animate-bounce'), 2000);
+        }
+
+        function sortList() {
+            const list = document.getElementById('network-list');
+            const items = Array.from(list.children);
+            items.sort((a, b) => {
+                const rssiA = parseInt(a.dataset.rssi || -100);
+                const rssiB = parseInt(b.dataset.rssi || -100);
+                return rssiB - rssiA;
+            });
+            items.forEach(node => list.appendChild(node));
+        }
+
+        function updateListUI(id, ssid, rssi, bssid = "N/A", ch = "N/A", type = 'wifi') {
+            const listEl = document.getElementById('network-list');
+            const emptyState = document.getElementById('empty-state');
+            if(emptyState) emptyState.remove();
+            const safeSSID = ssid.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            let sig;
+            if(rssi === "ACTIVE") {
+                 sig = { color: 'text-cannibal-orange', icon: 'fa-solid fa-wifi', label: 'ACT' };
+            } else {
+                sig = getSignalQuality(rssi);
+            }
+            let iconClass = sig.icon;
+            let typeColor = sig.color;
+            if(type === 'ble') { iconClass = 'fa-brands fa-bluetooth-b'; typeColor = 'text-cannibal-blue'; }
+            if(type === 'station') { iconClass = 'fa-solid fa-mobile-screen-button'; typeColor = 'text-gray-400'; }
+            const uniqueKey = type === 'station' ? bssid : safeSSID;
+            let existingItem = Array.from(listEl.children).find(item => item.dataset.key === uniqueKey);
+            if (!isSelectionMode && existingItem) {
+                 const rssiText = existingItem.querySelector('.rssi-text');
+                 rssiText.innerText = rssi;
+                 rssiText.className = `rssi-text text-[10px] font-mono font-bold ${typeColor}`;
+                 existingItem.dataset.rssi = (rssi === "ACTIVE" ? -50 : rssi);
+                 if(bssid !== "UNKNOWN_MAC") existingItem.dataset.bssid = bssid;
+                 sortList();
+                 return;
+            }
+            if(isSelectionMode && existingItem) {
+                 existingItem.querySelector('.id-badge').innerText = id;
+                 existingItem.dataset.marauderId = id;
+                 return;
+            }
+            const div = document.createElement('div');
+            const isUnknown = (id === "?");
+            div.dataset.key = uniqueKey;
+            div.dataset.marauderId = id;
+            div.dataset.rssi = (rssi === "ACTIVE" ? -50 : rssi);
+            div.dataset.ssid = ssid;
+            div.dataset.bssid = bssid;
+            div.dataset.ch = ch;
+            div.className = `group relative bg-white/5 border border-white/5 rounded-lg overflow-hidden transition-all duration-300 hover:bg-white/10 hover:border-white/20 mb-2 ${isUnknown ? 'card-disabled' : 'cursor-pointer'}`;
+            const badgeClass = isUnknown ? "text-cannibal-blue" : "text-white font-bold border-cannibal-green";
+            div.innerHTML = `
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-[.selected]:bg-cannibal-green transition-colors duration-300"></div>
+                <div class="p-3 flex items-center justify-between z-10 relative">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <span class="id-badge flex-shrink-0 w-8 h-6 flex items-center justify-center rounded bg-black/40 border border-white/10 text-[9px] font-mono ${badgeClass} group-hover:text-white transition-colors">${id}</span>
+                        <h3 class="ssid-text text-sm font-bold text-gray-200 truncate group-hover:text-white transition-colors" title="${safeSSID}">${safeSSID || 'HIDDEN'}</h3>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="rssi-text text-[10px] font-mono font-bold ${typeColor} opacity-70 group-hover:opacity-100">${rssi}</span>
+                        <div class="flex flex-col items-center justify-center w-6"><i class="sig-icon ${iconClass} ${typeColor} text-sm drop-shadow-[0_0_5px_rgba(0,0,0,0.5)]"></i></div>
+                    </div>
+                </div>
+            `;
+            div.onclick = () => {
+                if(div.dataset.marauderId === "?") return; 
+                if(isSelectionMode) toggleTarget(parseInt(div.dataset.marauderId), div);
+            };
+            listEl.appendChild(div);
+            sortList();
+            const total = document.querySelectorAll('#network-list > div').length;
+            document.getElementById('total-count').innerText = total;
+        }
+
+        async function sendCommand(cmd) {
+            const term = document.getElementById('term-out');
+            term.textContent += `\n>> ${cmd}\n`;
+            if(writer) await writer.write(cmd + "\n");
+        }
+        
+        function addSSID() {
+            const inp = document.getElementById('ssid-input');
+            if(inp.value) { sendCommand(`ssid -a -n ${inp.value}`); inp.value = ''; }
+        }
+
+        function runScan(type) {
+            if(isSelectionMode) toggleSelectionMode();
+            document.getElementById('scanner-line').style.display = 'block';
+            isScanning = true;
+            clearList(); 
+            setTimeout(() => sendCommand(type), 300);
+        }
+
+        function runPortScan() {
+             const ip = document.getElementById('target-ip').value;
+            if(ip) { sendCommand(`portscan -t ${ip}`); }
+            else { alert("No Target IP Selected!"); }
+        }
+
+        function runFileCmd(type) {
+            const fname = document.getElementById('file-input').value;
+            if(!fname) { alert("Enter filename first"); return; }
+            if(type === 'cat') sendCommand(`cat /${fname}`);
+            if(type === 'script') sendCommand(`script /${fname}`);
+        }
+        
+        function setPortalHtml() {
+            const val = document.getElementById('portal-html').value;
+            if(val) sendCommand(`evilportal -c sethtml ${val}`);
+        }
+        
+        function setChannel() {
+            const val = document.getElementById('ch-input').value;
+            if(val) sendCommand(`channel -s ${val}`);
+        }
+        
+        function runKarma() {
+            const val = document.getElementById('karma-input').value;
+            if(val) sendCommand(`karma -p ${val}`);
+        }
+        
+        function saveList() { sendCommand('save -a'); }
+
+        function stopAll() {
+            isScanning = false;
+            document.getElementById('scanner-line').style.display = 'none';
+            sendCommand('stopscan');
+            sendCommand('stopattack');
+            sendCommand('gpstracker -c stop');
+        }
+
+        function toggleSelectionMode() {
+            isSelectionMode = !isSelectionMode;
+            const ind = document.getElementById('mode-indicator');
+            const dot = document.getElementById('mode-dot');
+            const txt = document.getElementById('mode-text');
+
+            if(isSelectionMode) {
+                ind.classList.replace('bg-gray-800', 'bg-cannibal-green/20');
+                ind.classList.replace('border-gray-600', 'border-cannibal-green');
+                dot.style.transform = 'translateX(16px)';
+                dot.classList.replace('bg-white', 'bg-cannibal-green');
+                txt.innerText = "TARGET";
+                txt.classList.replace('text-gray-500', 'text-cannibal-green');
+                document.getElementById('scanner-line').style.display = 'none';
+                sendCommand('stopscan');
+                if(currentView === 'wifi') { clearList(); setTimeout(() => { sendCommand('list -a'); }, 500); }
+            } else {
+                ind.classList.replace('bg-cannibal-green/20', 'bg-gray-800');
+                ind.classList.replace('border-cannibal-green', 'border-gray-600');
+                dot.style.transform = 'translateX(0)';
+                dot.classList.replace('bg-cannibal-green', 'bg-white');
+                txt.innerText = "OBSERVE";
+                txt.classList.replace('text-cannibal-green', 'text-gray-500');
+                selectedTargets.clear();
+                updateTargetCount();
+                sendCommand('clearlist -s');
+                if(currentView === 'wifi') clearList(); 
+            }
+        }
+
+        function toggleTarget(id, el) {
+            if(selectedTargets.has(id)) {
+                selectedTargets.delete(id);
+                el.classList.remove('selected');
+            } else {
+                selectedTargets.set(id, {
+                    id: id,
+                    ssid: el.dataset.ssid || "Unknown",
+                    bssid: el.dataset.bssid || "UNKNOWN_MAC",
+                    ch: el.dataset.ch || "N/A"
+                });
+                el.classList.add('selected');
+                sendCommand(`select -a ${id}`);
+            }
+            updateTargetCount();
+        }
+
+        function updateTargetCount() {
+            const count = selectedTargets.size;
+            document.getElementById('target-count').innerText = count > 0 ? count + " LOCKED" : "NONE";
+        }
+
+        function clearList() {
+            document.getElementById('network-list').innerHTML = `
+                <div class="h-full flex flex-col items-center justify-center text-gray-700 gap-3 opacity-50" id="empty-state">
+                    <i class="fa-solid fa-satellite-dish text-4xl mb-2"></i>
+                    <span class="text-xs font-mono tracking-widest">WAITING DATA...</span>
+                </div>`;
+            document.getElementById('total-count').innerText = "0";
+        }
+
+        function switchView(id, btn) {
+            currentView = id; 
+            document.querySelectorAll('.view-panel').forEach(el => el.classList.add('hidden'));
+            document.getElementById('view-' + id).classList.remove('hidden');
+            document.querySelectorAll('.dock-icon').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+            if(isScanning) stopAll();
+        }
+
+        function toggleSniffModal() {
+            const modal = document.getElementById('sniffer-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function runSniffer(cmd, btn) {
+            document.querySelectorAll('.sniff-btn').forEach(b => b.classList.remove('active-sniff'));
+            btn.classList.add('active-sniff');
+            document.getElementById('sniffer-status').innerText = "RUNNING: " + cmd.toUpperCase();
+            document.getElementById('sniffer-status').className = "text-cannibal-purple font-bold animate-pulse";
+            sendCommand('stopscan');
+            setTimeout(() => { sendCommand(cmd); }, 300);
+        }
+
+        function sendManual() {
+            const el = document.getElementById('cmd-input');
+            if(el.value) { sendCommand(el.value); el.value = ''; }
+        }
+        document.getElementById('cmd-input').addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') sendManual();
+        });
+    </script>
+</body>
+</html>
